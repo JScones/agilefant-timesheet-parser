@@ -45,10 +45,16 @@ def comment_to_words(comment):
     return re.split("[ .:\[]", comment)
 
 
-def has_only_tags(comment):
+def has_only_tags(comment, words):
     """Returns True if the comment has only tags (or is empty)."""
     comment = comment.strip()
-    return not (len(comment) > 0 and comment[0] != '#')
+    if len(comment) == 0:
+        return True
+
+    for word in words:
+        if len(word) > 0 and word[0] != '#':
+            return False
+    return True
 
 
 def get_commit_hashes(string):
@@ -91,7 +97,7 @@ def process_entry(entry, users, existing_comments, use_first_name, display_all_t
                 elif not (commitless_tags.intersection(tags)):
                     print(user + ": [warning: no #commits tag] " + comment)
 
-                if has_only_tags(comment):
+                if has_only_tags(comment, words):
                     print(user + ": [error: comment with only tags] " + comment)
 
                 for old_user, old_comment in existing_comments:
